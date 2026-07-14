@@ -6,7 +6,7 @@ import { protectRoute } from '../middleware/authMiddleware.js'
 const router = express.Router();
 
 router.post('/create', protectRoute, upload.single('postImg'), createPost);
-router.put('/update/:id', upload.single('postImg'), updatePost);
+router.put('/update/:id', protectRoute, upload.single('postImg'), updatePost);
 router.get('/all-posts', fetchPosts);
 router.get('/:id', fetchPostWithId);
 

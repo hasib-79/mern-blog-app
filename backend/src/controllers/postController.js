@@ -3,7 +3,7 @@ import Post from '../models/postModel.js'
 
 export const createPost = async (req, res) => {
 	try {
-		const { title, summary, content, author } = req.body;
+		const { title, summary, content } = req.body;
 
 		const postImg = req.file;
 
@@ -17,7 +17,7 @@ export const createPost = async (req, res) => {
 		const uploadResponse = await cloudinary.uploader.upload(postImg.path, { resource_type: 'image' });
 
 		const newPost = new Post({
-			author,
+			author: req.user.username,
 			title,
 			summary,
 			content,
@@ -50,6 +50,12 @@ export const updatePost = async (req, res) => {
 
 		const { id: postId } = req.params;
 
+		const post = await Post.findById({ id });
+
+		if (post.author !== req.user.username) {
+			return res.status(401).json({ message: "Unauthorized" });
+		}
+
 		const uploadResponse = await cloudinary.uploader.upload(postImg.path, { resource_type: 'image' });
 
 		const updatedPost = await Post.findByIdAndUpdate(
@@ -79,6 +85,8 @@ export const fetchPosts = async (req, res) => {
 		if (allPosts?.length > 0) {
 			const reversedPosts = allPosts.reverse();
 			res.status(200).json(reversedPosts);
+		} else {
+			res.status(200).json([]);
 		}
 	} catch (error) {
 		console.log('Error in fetchPosts controller', error.message);

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
 import Navbar from './components/Navbar'
 import Post from './components/Post'
@@ -45,7 +45,6 @@ const App = () => {
             {posts?.map((post, index) => (
               <Post
                 postId={post._id}
-                id={post._id}
                 author={post.author}
                 key={post._id}
                 postImg={post.postImg}
