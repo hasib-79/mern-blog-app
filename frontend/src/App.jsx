@@ -36,6 +36,14 @@ const App = () => {
     )
   }
 
+  if (posts.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    )
+  }
+
   return (
     <div className='max-w-[72vw] mx-auto'>
       <Navbar />

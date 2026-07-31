@@ -7,7 +7,7 @@ export const createPost = async (req, res) => {
 
 		const postImg = req.file;
 
-		if (!title || !summary || !content) {
+		if (!title.trim() || !summary.trim() || !content.trim()) {
 			return res.status(400).json({ message: 'All fields are required' });
 		}
 		if (!postImg) {
@@ -41,7 +41,7 @@ export const updatePost = async (req, res) => {
 		const { title, summary, content } = req.body;
 		const postImg = req.file;
 
-		if (!title || !summary || !content) {
+		if (!title.trim() || !summary.trim() || !content.trim()) {
 			return res.status(400).json({ message: 'All fields are required' });
 		}
 		if (!postImg) {
@@ -50,7 +50,11 @@ export const updatePost = async (req, res) => {
 
 		const { id: postId } = req.params;
 
-		const post = await Post.findById({ id });
+		const post = await Post.findById(postId);
+
+		if (!post) {
+			return res.status(404).json({ message: "Post not found" });
+		}
 
 		if (post.author !== req.user.username) {
 			return res.status(401).json({ message: "Unauthorized" });
@@ -81,10 +85,9 @@ export const updatePost = async (req, res) => {
 
 export const fetchPosts = async (req, res) => {
 	try {
-		const allPosts = await Post.find({});
-		if (allPosts?.length > 0) {
-			const reversedPosts = allPosts.reverse();
-			res.status(200).json(reversedPosts);
+		const posts = await Post.find().sort({ createdAt: -1 });
+		if (posts?.length > 0) {
+			res.status(200).json(posts);
 		} else {
 			res.status(200).json([]);
 		}
